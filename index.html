@@ -168,7 +168,7 @@
     if(stored){ nameEl.textContent = stored; }
 
     changeName.addEventListener('click', ()=>{
-      const val = prompt('Enter the birthday name:', nameEl.textContent.replace('[Name]',''));
+      const val = prompt('Enter the birthday name:', nameEl.textContent);
       if(val!==null){
         const cleaned = val.trim() || '[Name]';
         nameEl.textContent = cleaned;
@@ -248,3 +248,4 @@
   </script>
 </body>
 </html>
+
