@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Happy Birthday! 🎉</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
@@ -54,7 +54,7 @@
       padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.6);
       backdrop-filter:blur(6px);
     }
-    .actions{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+    .actions{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;flex-direction:column;}
     .btn{
       border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;
       border:0;outline:0;box-shadow:0 6px 0 rgba(0,0,0,0.12);
@@ -94,21 +94,20 @@
       pointer-events: none;
       z-index: 1000;
     }
-    /* ✨ Neon footer magic ✨ */
-    footer {
-      margin-top: 40px;
-      padding-top: 12px;
-      border-top: 1px dashed rgba(0,0,0,0.1);
-      text-align: center;
-      font-size: 14px;
-      color: var(--accent-pink);
-      text-shadow: 0 0 6px rgba(255,121,198,0.4), 0 0 10px rgba(111,211,255,0.3);
-      opacity: 0.9;
-      animation: glowShift 3s ease-in-out infinite alternate;
+    footer{
+      margin-top:30px;
+      text-align:center;
+      font-size:14px;
+      opacity:0.7;
+      font-weight:700;
     }
-    @keyframes glowShift {
-      0% { color: var(--accent-pink); text-shadow: 0 0 6px rgba(255,121,198,0.6); }
-      100% { color: var(--accent-blue); text-shadow: 0 0 6px rgba(111,211,255,0.6); }
+    select#musicSelector{
+      padding:10px;
+      border-radius:10px;
+      border:2px solid rgba(0,0,0,0.1);
+      background:white;
+      font-weight:700;
+      margin-top:10px;
     }
   </style>
 </head>
@@ -121,13 +120,21 @@
       <h2 class="subtitle">Wishing you the best, <span class="name">Sim</span>!</h2>
 
       <div class="message">
-        YO — sending you a pocketful of pink glitter on your special day. May your day be filled with happy-happy macarons, hapiness made go! 
+        YO — sending you a pocketful of pink glitter on your special day. May your day be filled with happy-happy macarons, happiness made go! 
       </div>
 
       <div class="actions">
         <button class="btn btn-arcade" id="playBtn">🍓Celebrate</button>
         <button class="btn btn-ghost" id="changeName">✎ Edit Name</button>
         <button class="btn btn-ghost" id="downloadPNG">📷 Save Snapshot</button>
+
+        <!-- 🎵 Music Selector -->
+        <select id="musicSelector">
+          <option value="">🎶 Choose a song...</option>
+          <option value="https://docs.google.com/uc?export=download&id=1GDp884kxf93TbjMDTblw3Q0uPx7Ik7FM">Diva</option>
+          <option value="https://docs.google.com/uc?export=download&id=1e2zLO6Wc8ytHeaG5yGtkHR4aMeByvX68">Mermaid Melody - Legend of Mermaid</option>
+          <option value="https://docs.google.com/uc?export=download&id=191drPWZ4lcy35dEQNYlGuaBI1vxoO8h1">Salut d'Amour Op.12</option>
+        </select>
       </div>
 
       <footer>Made by PING 🦝✨</footer>
@@ -150,7 +157,7 @@
     </aside>
   </div>
 
-  <audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c864bcb15.mp3?filename=happy-birthday-116206.mp3" preload="auto"></audio>
+  <audio id="bgMusic" preload="auto"></audio>
 
   <script>
     const $ = s => document.querySelector(s);
@@ -161,27 +168,27 @@
     const video = $('#video');
     const photoCanvas = $('#photoCanvas');
     const downloadPNG = $('#downloadPNG');
-    const ctxA = new (window.AudioContext||window.webkitAudioContext)();
     const music = $('#bgMusic');
+    const musicSelector = $('#musicSelector');
+    const ctxA = new (window.AudioContext||window.webkitAudioContext)();
 
-    const stored = localStorage.getItem('bday_name') || '';
-    if(stored){ nameEl.textContent = stored; }
+    const stored = localStorage.getItem('bday_name') || 'Sim';
+    nameEl.textContent = stored;
 
     changeName.addEventListener('click', ()=>{
       const val = prompt('Enter the birthday name:', nameEl.textContent);
       if(val!==null){
-        const cleaned = val.trim() || '[Name]';
+        const cleaned = val.trim() || 'Sim';
         nameEl.textContent = cleaned;
         localStorage.setItem('bday_name', cleaned);
       }
     });
 
-    // Camera setup
     async function startCamera(){
       try{
         const stream = await navigator.mediaDevices.getUserMedia({video:true});
         video.srcObject = stream;
-      }catch(err){ alert('Camera access denied or not available.'); }
+      }catch(err){ console.log('Camera unavailable.'); }
     }
     startCamera();
 
@@ -195,7 +202,6 @@
       playBeep();
     });
 
-    // ✅ Save snapshot as image
     downloadPNG.addEventListener('click', ()=>{
       if(photoCanvas.style.display === 'none'){
         alert('Take a photo first!');
@@ -217,7 +223,6 @@
       osc.start(now); osc.stop(now+0.2);
     }
 
-    // Confetti
     const canvas = $('#confetti');
     const ctx = canvas.getContext('2d');
     let W = canvas.width = innerWidth, H = canvas.height = innerHeight;
@@ -236,16 +241,23 @@
       if(confetti.length===0){cancelAnimationFrame(anim);anim=null;}
       else anim=requestAnimationFrame(confettiLoop);
     }
+
     function startParty(){
+      const chosen = musicSelector.value;
+      if(!chosen){
+        alert('🎵 Please choose a song first!');
+        return;
+      }
+      music.src = chosen;
       if(anim)return;
       confetti=makeConfetti();
       confettiLoop();
       music.currentTime = 0;
-      music.play().catch(()=>alert("Click again to enable sound 🎵"));
+      music.play().catch(()=>alert("Tap again to enable sound 🎵"));
       playBeep();
     }
-    playBtn.addEventListener('click',startParty);
+
+    playBtn.addEventListener('click', startParty);
   </script>
 </body>
 </html>
-
