@@ -94,6 +94,22 @@
       pointer-events: none;
       z-index: 1000;
     }
+    /* ✨ Neon footer magic ✨ */
+    footer {
+      margin-top: 40px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 14px;
+      color: var(--accent-pink);
+      text-shadow: 0 0 6px rgba(255,121,198,0.4), 0 0 10px rgba(111,211,255,0.3);
+      opacity: 0.9;
+      animation: glowShift 3s ease-in-out infinite alternate;
+    }
+    @keyframes glowShift {
+      0% { color: var(--accent-pink); text-shadow: 0 0 6px rgba(255,121,198,0.6); }
+      100% { color: var(--accent-blue); text-shadow: 0 0 6px rgba(111,211,255,0.6); }
+    }
   </style>
 </head>
 <body>
@@ -102,7 +118,7 @@
   <div class="card">
     <div>
       <h1 class="title">★Happy Birthday★</h1>
-      <h2 class="subtitle">Wishing you the best, <span class="name">[Name]</span>!</h2>
+      <h2 class="subtitle">Wishing you the best, <span class="name">Sim</span>!</h2>
 
       <div class="message">
         YO — sending you a pocketful of pink glitter on your special day. May your day be filled with happy-happy macarons, hapiness made go! 
@@ -128,7 +144,7 @@
         <div class="box">🎁</div>
         <div style="text-align:left">
           <div style="font-weight:800">A tiny surprise</div>
-          <div style="font: size 15px;opacity:0.8">Tap celebrate to unleash confetti & sound</div>
+          <div style="font-size:15px;opacity:0.8">Tap celebrate to unleash confetti & sound</div>
         </div>
       </div>
     </aside>
